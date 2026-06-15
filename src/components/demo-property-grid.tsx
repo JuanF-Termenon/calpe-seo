@@ -382,8 +382,8 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
                   <span className="whitespace-nowrap text-xs sm:text-sm">{sortOptions.find((o) => o.id === sortBy)?.label}</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
                 </button>
-                {sortOpen && (
-                  <div className="absolute right-0 z-20 mt-1 min-w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
+                  {sortOpen && (
+                  <div className="absolute right-0 sm:left-0 z-20 mt-1 min-w-44 max-w-[90vw] rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
                     {sortOptions.map((opt) => (
                       <button
                         key={opt.id}
