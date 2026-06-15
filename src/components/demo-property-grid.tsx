@@ -290,15 +290,17 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
     setRangeMax(currentBounds.max);
   }
 
+  const [pageChangedByTab, setPageChangedByTab] = useState(false);
   const scrollRef = useRef(false);
   useEffect(() => {
     if (!scrollRef.current) { scrollRef.current = true; return; }
+    if (pageChangedByTab) { setPageChangedByTab(false); return; }
     const el = document.getElementById('propiedades');
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: 'smooth' });
     }
-  }, [page]);
+  }, [page, pageChangedByTab]);
 
   return (
     <section id="propiedades" className="scroll-mt-20 py-16">
@@ -310,44 +312,47 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
           </p>
         </div>
 
-        <div className="mt-6">
-          <div className="flex gap-1 rounded-xl bg-slate-100 p-1 w-fit dark:bg-slate-800">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
-                  activeTab === tab.id
-                    ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
-                    : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
-                }`}
-              >
-                {tab.label}
-                {tab.id !== "todas" && (
-                  <span className="ml-1.5 text-xs text-slate-400 dark:text-slate-500">
-                    ({localizedProperties.filter((p) => p.purpose === tab.id).length})
-                  </span>
-                )}
-              </button>
-            ))}
+          <div className="mt-6 overflow-x-auto -mx-6 px-6 scrollbar-none">
+            <div className="flex gap-1 rounded-xl bg-slate-100 p-1 w-fit dark:bg-slate-800">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => { setActiveTab(tab.id); setPageChangedByTab(true); setPage(0); }}
+                  className={`rounded-lg px-5 py-2 text-sm font-semibold whitespace-nowrap transition-colors ${
+                    activeTab === tab.id
+                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
+                      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+                  }`}
+                >
+                  {tab.label}
+                  {tab.id !== "todas" && (
+                    <span className="ml-1.5 text-xs text-slate-400 dark:text-slate-500">
+                      ({localizedProperties.filter((p) => p.purpose === tab.id).length})
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <MultiselectDropdown
-              label={t("demo.grid.filter-type")}
-              options={types as readonly string[]}
-              selected={selectedTypes}
-              onChange={setSelectedTypes}
-              selectedLabel={selectedTypes.length > 0 ? t("demo.grid.filter-selected").replace("{n}", String(selectedTypes.length)) : undefined}
-            />
-            <MultiselectDropdown
-              label={t("demo.grid.filter-beds")}
-              options={bedOptions as readonly number[]}
-              selected={selectedBeds}
-              onChange={setSelectedBeds}
-              selectedLabel={selectedBeds.length > 0 ? t("demo.grid.filter-selected").replace("{n}", String(selectedBeds.length)) : undefined}
-            />
-            <div className="flex-1 min-w-[200px] max-w-xs">
+          <div className="mt-3 flex flex-wrap items-start gap-3 sm:items-center">
+            <div className="flex flex-wrap items-center gap-3">
+              <MultiselectDropdown
+                label={t("demo.grid.filter-type")}
+                options={types as readonly string[]}
+                selected={selectedTypes}
+                onChange={setSelectedTypes}
+                selectedLabel={selectedTypes.length > 0 ? t("demo.grid.filter-selected").replace("{n}", String(selectedTypes.length)) : undefined}
+              />
+              <MultiselectDropdown
+                label={t("demo.grid.filter-beds")}
+                options={bedOptions as readonly number[]}
+                selected={selectedBeds}
+                onChange={setSelectedBeds}
+                selectedLabel={selectedBeds.length > 0 ? t("demo.grid.filter-selected").replace("{n}", String(selectedBeds.length)) : undefined}
+              />
+            </div>
+            <div className="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs">
               <DualRangeSlider
                 min={currentBounds.min}
                 max={currentBounds.max}
@@ -357,45 +362,46 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
                 onChangeMax={setRangeMax}
               />
             </div>
-            {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="text-sm text-blue-700 hover:text-blue-800 hover:underline whitespace-nowrap dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                {t("demo.grid.filter-clear")}
-              </button>
-            )}
-            <div className="relative ml-auto" ref={sortRef}>
-              <button
-                onClick={() => setSortOpen(!sortOpen)}
-                className="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:border-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500"
-              >
-                <ArrowUpDown className="h-4 w-4" />
-                <span className="whitespace-nowrap">{sortOptions.find((o) => o.id === sortBy)?.label}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
-              </button>
-              {sortOpen && (
-                <div className="absolute z-20 mt-1 min-w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
-                  {sortOptions.map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => { setSortBy(opt.id); setSortOpen(false); }}
-                      className={`flex w-full items-center rounded-lg px-3 py-2 text-sm text-left ${
-                        sortBy === opt.id
-                          ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                          : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
+            <div className="flex items-center gap-3">
+              {hasFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-blue-700 hover:text-blue-800 hover:underline whitespace-nowrap dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  {t("demo.grid.filter-clear")}
+                </button>
               )}
+              <div className="relative ml-auto" ref={sortRef}>
+                <button
+                  onClick={() => setSortOpen(!sortOpen)}
+                  className="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:border-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500"
+                >
+                  <ArrowUpDown className="h-4 w-4" />
+                  <span className="hidden sm:inline whitespace-nowrap">{sortOptions.find((o) => o.id === sortBy)?.label}</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
+                </button>
+                {sortOpen && (
+                  <div className="absolute right-0 z-20 mt-1 min-w-44 rounded-xl border border-slate-200 bg-white p-2 shadow-lg dark:border-slate-700 dark:bg-slate-800">
+                    {sortOptions.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => { setSortBy(opt.id); setSortOpen(false); }}
+                        className={`flex w-full items-center rounded-lg px-3 py-2 text-sm text-left ${
+                          sortBy === opt.id
+                            ? "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                            : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {paginated.map((p, i) => (
             <DemoPropertyCard
               key={p.ref}
