@@ -58,6 +58,7 @@ function DualRangeSlider({
 
   function handlePointerDown(e: React.MouseEvent | React.TouchEvent, thumb: "min" | "max") {
     e.preventDefault();
+    e.stopPropagation();
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
     const v = valueFromX(clientX);
 
@@ -65,6 +66,7 @@ function DualRangeSlider({
     if (thumb === "max" && v > valueRef.current.valueMin) onChangeMax(v);
 
     function onMove(ev: MouseEvent | TouchEvent) {
+      ev.preventDefault();
       const cx = "touches" in ev ? ev.touches[0].clientX : (ev as MouseEvent).clientX;
       const val = valueFromX(cx);
       if (thumb === "min" && val < valueRef.current.valueMax) onChangeMin(val);
@@ -91,8 +93,8 @@ function DualRangeSlider({
   const pct = (v: number) => ((v - min) / (max - min)) * 100;
 
   return (
-    <div className="relative">
-      <div className="relative h-6" ref={trackRef}>
+    <div className="relative touch-none">
+      <div className="relative h-8" ref={trackRef}>
         <div className="absolute top-1/2 left-0 right-0 h-1 -translate-y-1/2 rounded-full bg-slate-200 dark:bg-slate-700" />
         <div
           className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-blue-700 dark:bg-blue-500"
@@ -290,17 +292,17 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
     setRangeMax(currentBounds.max);
   }
 
-  const [pageChangedByTab, setPageChangedByTab] = useState(false);
+  const skipPageScroll = useRef(false);
   const scrollRef = useRef(false);
   useEffect(() => {
     if (!scrollRef.current) { scrollRef.current = true; return; }
-    if (pageChangedByTab) { setPageChangedByTab(false); return; }
+    if (skipPageScroll.current) { skipPageScroll.current = false; return; }
     const el = document.getElementById('propiedades');
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 80;
       window.scrollTo({ top, behavior: 'smooth' });
     }
-  }, [page, pageChangedByTab]);
+  }, [page]);
 
   return (
     <section id="propiedades" className="scroll-mt-20 py-16">
@@ -317,7 +319,7 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setPageChangedByTab(true); setPage(0); }}
+                  onClick={() => { skipPageScroll.current = true; setActiveTab(tab.id); setPage(0); }}
                   className={`rounded-lg px-5 py-2 text-sm font-semibold whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-slate-100"
