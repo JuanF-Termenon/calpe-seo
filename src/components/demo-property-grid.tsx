@@ -378,8 +378,8 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
                   onClick={() => setSortOpen(!sortOpen)}
                   className="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:border-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500"
                 >
-                  <ArrowUpDown className="h-4 w-4" />
-                  <span className="hidden sm:inline whitespace-nowrap">{sortOptions.find((o) => o.id === sortBy)?.label}</span>
+                  <ArrowUpDown className="h-4 w-4 shrink-0" />
+                  <span className="whitespace-nowrap text-xs sm:text-sm">{sortOptions.find((o) => o.id === sortBy)?.label}</span>
                   <ChevronDown className={`h-4 w-4 transition-transform ${sortOpen ? "rotate-180" : ""}`} />
                 </button>
                 {sortOpen && (
