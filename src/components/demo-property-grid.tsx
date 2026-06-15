@@ -364,7 +364,8 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
                 onChangeMax={setRangeMax}
               />
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex w-full items-center justify-between gap-3 sm:w-auto">
+              <div>
               {hasFilters && (
                 <button
                   onClick={clearFilters}
@@ -373,7 +374,8 @@ export function DemoPropertyGrid({ search = "", initialRef }: { search?: string;
                   {t("demo.grid.filter-clear")}
                 </button>
               )}
-              <div className="relative ml-auto" ref={sortRef}>
+              </div>
+              <div className="relative" ref={sortRef}>
                 <button
                   onClick={() => setSortOpen(!sortOpen)}
                   className="flex items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:border-slate-400 dark:border-slate-600 dark:text-slate-300 dark:hover:border-slate-500"
