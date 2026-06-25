@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { MapPin, Bed, Bath, Maximize, X, Phone, Mail, MessageCircle, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
@@ -205,8 +204,10 @@ export function DemoPropertyCard({
                 <img
                   src={property.images[imgIdx]}
                   alt={`${p.title} — foto ${imgIdx + 1}`}
-                  className="aspect-[4/3] w-full object-cover sm:aspect-[16/9]"
+                  className="aspect-[4/3] w-full cursor-pointer object-cover sm:aspect-[16/9]"
+                  onClick={() => setFullscreen(true)}
                 />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                 <button
                   onClick={() => setFullscreen(true)}
                   className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
@@ -214,7 +215,6 @@ export function DemoPropertyCard({
                 >
                   <Maximize className="h-4 w-4" />
                 </button>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                 {property.images.length > 1 && (
                   <>
                     <button
@@ -397,7 +397,7 @@ export function DemoPropertyCard({
           </div>
         </div>
       )}
-      {fullscreen && createPortal(
+      {fullscreen && (
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
           onClick={() => setFullscreen(false)}
@@ -430,8 +430,7 @@ export function DemoPropertyCard({
             className="max-h-full max-w-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
-        </div>,
-        document.body
+        </div>
       )}
     </>
   );

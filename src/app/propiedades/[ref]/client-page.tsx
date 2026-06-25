@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { createPortal } from "react-dom";
 import { MapPin, Bed, Bath, Maximize, ChevronLeft, ChevronRight, Phone, Mail, MessageCircle, ArrowLeft, Building2, X } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
@@ -70,8 +69,10 @@ export function PropertyClientPage({ property }: { property: Property }) {
             <img
               src={property.images[imgIdx]}
               alt={`${p.title} — foto ${imgIdx + 1}`}
-              className="h-full w-full object-cover"
+              className="h-full w-full cursor-pointer object-cover"
+              onClick={() => setFullscreen(true)}
             />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
             <button
               onClick={() => setFullscreen(true)}
               className="absolute bottom-6 right-6 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
@@ -79,7 +80,6 @@ export function PropertyClientPage({ property }: { property: Property }) {
             >
               <Maximize className="h-4 w-4" />
             </button>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
             {property.images.length > 1 && (
               <>
                 <button onClick={prevImg} className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40 hover:scale-110">
@@ -216,7 +216,7 @@ export function PropertyClientPage({ property }: { property: Property }) {
         </div>
       </div>
 
-      {fullscreen && hasImages && createPortal(
+      {fullscreen && hasImages && (
         <div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
           onClick={() => setFullscreen(false)}
@@ -249,8 +249,7 @@ export function PropertyClientPage({ property }: { property: Property }) {
             className="max-h-full max-w-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
-        </div>,
-        document.body
+        </div>
       )}
     </div>
   );
