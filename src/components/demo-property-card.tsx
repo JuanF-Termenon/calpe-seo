@@ -204,9 +204,16 @@ export function DemoPropertyCard({
                 <img
                   src={property.images[imgIdx]}
                   alt={`${p.title} — foto ${imgIdx + 1}`}
-                  className="aspect-[4/3] w-full cursor-pointer object-cover sm:aspect-[16/9]"
-                  onClick={() => setFullscreen(true)}
+                  className="aspect-[4/3] w-full object-cover sm:aspect-[16/9]"
                 />
+                <button
+                  onClick={() => setFullscreen(true)}
+                  onTouchEnd={(e) => { e.preventDefault(); setFullscreen(true); }}
+                  className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
+                  aria-label="Ver imagen completa"
+                >
+                  <Maximize className="h-4 w-4" />
+                </button>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                 {property.images.length > 1 && (
                   <>

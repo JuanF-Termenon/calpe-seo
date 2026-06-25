@@ -69,9 +69,15 @@ export function PropertyClientPage({ property }: { property: Property }) {
             <img
               src={property.images[imgIdx]}
               alt={`${p.title} — foto ${imgIdx + 1}`}
-              className="h-full w-full cursor-pointer object-cover"
-              onClick={() => setFullscreen(true)}
+              className="h-full w-full object-cover"
             />
+            <button
+              onClick={() => setFullscreen(true)}
+              className="absolute bottom-6 right-6 flex h-10 w-10 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
+              aria-label="Ver imagen completa"
+            >
+              <Maximize className="h-4 w-4" />
+            </button>
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
             {property.images.length > 1 && (
               <>
