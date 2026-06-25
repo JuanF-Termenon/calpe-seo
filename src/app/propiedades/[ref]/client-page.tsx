@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { MapPin, Bed, Bath, Maximize, ChevronLeft, ChevronRight, Phone, Mail, MessageCircle, ArrowLeft, Building2, X } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
@@ -44,6 +44,15 @@ export function PropertyClientPage({ property }: { property: Property }) {
   }, [nextImg, prevImg]);
 
   const purposeLabel = p.purpose === "venta" ? t("demo.card.for-sale") : p.purpose === "alquiler" ? t("demo.card.for-rent") : t("demo.card.for-season");
+
+  useEffect(() => {
+    if (fullscreen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [fullscreen]);
 
   return (
     <div className="min-h-dvh bg-white dark:bg-slate-950">
