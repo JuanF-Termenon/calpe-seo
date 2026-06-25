@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { MapPin, Bed, Bath, Maximize, ChevronLeft, ChevronRight, Phone, Mail, MessageCircle, ArrowLeft, Building2 } from "lucide-react";
+import { MapPin, Bed, Bath, Maximize, ChevronLeft, ChevronRight, Phone, Mail, MessageCircle, ArrowLeft, Building2, X } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
 import { localizeProperty } from "@/lib/property-translations";
@@ -14,6 +14,7 @@ const purposeColors: Record<string, string> = {
 
 export function PropertyClientPage({ property }: { property: Property }) {
   const [imgIdx, setImgIdx] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
   const { t, locale } = useLang();
   const p = localizeProperty(property, locale);
   const hasImages = property.images.length > 0;
@@ -68,7 +69,8 @@ export function PropertyClientPage({ property }: { property: Property }) {
             <img
               src={property.images[imgIdx]}
               alt={`${p.title} — foto ${imgIdx + 1}`}
-              className="h-full w-full object-cover"
+              className="h-full w-full cursor-pointer object-cover"
+              onClick={() => setFullscreen(true)}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
             {property.images.length > 1 && (
@@ -206,6 +208,42 @@ export function PropertyClientPage({ property }: { property: Property }) {
           </p>
         </div>
       </div>
+
+      {fullscreen && hasImages && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setFullscreen(false)}
+        >
+          <button
+            onClick={() => setFullscreen(false)}
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          {property.images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImg(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImg(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </>
+          )}
+          <img
+            src={property.images[imgIdx]}
+            alt={p.title}
+            className="max-h-full max-w-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }

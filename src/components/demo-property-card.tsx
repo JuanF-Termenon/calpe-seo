@@ -17,6 +17,7 @@ export function DemoPropertyCard({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const [imgIdx, setImgIdx] = useState(0);
+  const [fullscreen, setFullscreen] = useState(false);
   const { t, locale } = useLang();
   const p = localizeProperty(property, locale);
 
@@ -203,7 +204,8 @@ export function DemoPropertyCard({
                 <img
                   src={property.images[imgIdx]}
                   alt={`${p.title} — foto ${imgIdx + 1}`}
-                  className="aspect-[4/3] w-full object-cover sm:aspect-[16/9]"
+                  className="aspect-[4/3] w-full cursor-pointer object-cover sm:aspect-[16/9]"
+                  onClick={() => setFullscreen(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                 {property.images.length > 1 && (
@@ -386,6 +388,41 @@ export function DemoPropertyCard({
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {fullscreen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setFullscreen(false)}
+        >
+          <button
+            onClick={() => setFullscreen(false)}
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          {property.images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImg(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImg(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+            </>
+          )}
+          <img
+            src={property.images[imgIdx]}
+            alt={p.title}
+            className="max-h-full max-w-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </>
