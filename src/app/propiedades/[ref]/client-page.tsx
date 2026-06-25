@@ -103,7 +103,7 @@ export function PropertyClientPage({ property }: { property: Property }) {
         )}
 
         <div className="mx-auto max-w-4xl px-6 py-8 sm:py-12">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 flex">
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl dark:text-slate-100">{p.title}</h1>
               <p className="mt-2 flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
@@ -111,7 +111,7 @@ export function PropertyClientPage({ property }: { property: Property }) {
                 {p.location}
               </p>
             </div>
-            <div className="flex shrink-0 flex-wrap gap-1.5">
+            <div className="flex shrink-0 gap-1.5">
               <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white ${purposeColors[p.purpose] || "bg-blue-600"}`}>
                 {purposeLabel}
               </span>
