@@ -372,9 +372,18 @@ export function DemoPropertyCard({
                 </p>
               </div>
 
-              <p className="mt-4 text-xs text-slate-400 dark:text-slate-500">
-                {t("demo.card.ref").replace("{ref}", property.ref)}
-              </p>
+              <div className="mt-4 flex items-center justify-between">
+                <p className="text-xs text-slate-400 dark:text-slate-500">
+                  {t("demo.card.ref").replace("{ref}", property.ref)}
+                </p>
+                <a
+                  href={`/propiedades/${property.ref}`}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                >
+                  {t("demo.card.view-page")}
+                  <ChevronRight className="h-3 w-3" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

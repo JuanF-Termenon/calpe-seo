@@ -191,6 +191,7 @@ export const de: Record<string, string> = {
   "demo.card.whatsapp": "WhatsApp",
   "demo.card.consent": "Mit der Kontaktaufnahme stimmen Sie zu, dass wir Ihnen antworten dürfen.",
   "demo.card.ref": "Ref: {ref}",
+  "demo.card.view-page": "Vollständige Seite",
   "demo.about.title": "Über uns",
   "demo.about.desc": "Wir sind eine erfahrene Immobilienagentur auf dem Markt der Costa Blanca. Unser mehrsprachiges Team begleitet Sie bei jedem Schritt.",
   "demo.about.properties": "Immobilien im Portfolio",

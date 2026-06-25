@@ -191,6 +191,7 @@ export const en: Record<string, string> = {
   "demo.card.whatsapp": "WhatsApp",
   "demo.card.consent": "By contacting us you consent to us replying to you.",
   "demo.card.ref": "Ref: {ref}",
+  "demo.card.view-page": "View full page",
   "demo.about.title": "About us",
   "demo.about.desc": "We are a real estate agency with experience in the Costa Blanca market. Our multilingual professional team will guide you through every step.",
   "demo.about.properties": "Properties in portfolio",
