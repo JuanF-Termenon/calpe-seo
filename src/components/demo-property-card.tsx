@@ -112,7 +112,7 @@ export function DemoPropertyCard({
                 </div>
               </>
             )}
-            <div className="absolute left-3 top-3 flex flex-col gap-1">
+            <div className="absolute left-3 top-3 flex flex-col items-start gap-1">
               <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
                 {p.type}
               </span>
@@ -131,7 +131,7 @@ export function DemoPropertyCard({
             <div className="absolute inset-0 flex items-center justify-center">
               <Building2 className="h-14 w-14 text-white/30" />
             </div>
-            <div className="absolute left-3 top-3 flex flex-col gap-1">
+            <div className="absolute left-3 top-3 flex flex-col items-start gap-1">
               <span className="rounded-full bg-white/90 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
                 {p.type}
               </span>
