@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { MapPin, Bed, Bath, Maximize, ChevronLeft, ChevronRight, Phone, Mail, MessageCircle, ArrowLeft, Building2, X } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
@@ -215,13 +216,13 @@ export function PropertyClientPage({ property }: { property: Property }) {
         </div>
       </div>
 
-      {fullscreen && hasImages && (
+      {fullscreen && hasImages && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
           onClick={() => setFullscreen(false)}
         >
           <button
-            onClick={() => setFullscreen(false)}
+            onClick={(e) => { e.stopPropagation(); setFullscreen(false); }}
             className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
           >
             <X className="h-5 w-5" />
@@ -248,7 +249,8 @@ export function PropertyClientPage({ property }: { property: Property }) {
             className="max-h-full max-w-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

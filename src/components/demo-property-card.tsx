@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { MapPin, Bed, Bath, Maximize, X, Phone, Mail, MessageCircle, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
@@ -208,7 +209,6 @@ export function DemoPropertyCard({
                 />
                 <button
                   onClick={() => setFullscreen(true)}
-                  onTouchEnd={(e) => { e.preventDefault(); setFullscreen(true); }}
                   className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
                   aria-label="Ver imagen completa"
                 >
@@ -397,13 +397,13 @@ export function DemoPropertyCard({
           </div>
         </div>
       )}
-      {fullscreen && (
+      {fullscreen && createPortal(
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4"
           onClick={() => setFullscreen(false)}
         >
           <button
-            onClick={() => setFullscreen(false)}
+            onClick={(e) => { e.stopPropagation(); setFullscreen(false); }}
             className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40"
           >
             <X className="h-5 w-5" />
@@ -430,7 +430,8 @@ export function DemoPropertyCard({
             className="max-h-full max-w-full object-contain"
             onClick={(e) => e.stopPropagation()}
           />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
