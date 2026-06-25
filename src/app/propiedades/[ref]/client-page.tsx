@@ -30,6 +30,10 @@ export function PropertyClientPage({ property }: { property: Property }) {
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   }, []);
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const diff = Math.abs(e.touches[0].clientX - touchStartX.current);
+    if (diff > 10) e.preventDefault();
+  }, []);
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) {
@@ -56,7 +60,9 @@ export function PropertyClientPage({ property }: { property: Property }) {
         {hasImages ? (
           <div
             className="relative h-72 sm:h-[500px] bg-slate-200 dark:bg-slate-700"
+            style={{ touchAction: "pan-y" }}
             onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
             <img

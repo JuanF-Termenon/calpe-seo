@@ -37,6 +37,10 @@ export function DemoPropertyCard({
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   }, []);
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const diff = Math.abs(e.touches[0].clientX - touchStartX.current);
+    if (diff > 10) e.preventDefault();
+  }, []);
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) {
@@ -49,6 +53,10 @@ export function DemoPropertyCard({
   const modalTouchStartX = useRef(0);
   const handleModalTouchStart = useCallback((e: React.TouchEvent) => {
     modalTouchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleModalTouchMove = useCallback((e: React.TouchEvent) => {
+    const diff = Math.abs(e.touches[0].clientX - modalTouchStartX.current);
+    if (diff > 10) e.preventDefault();
   }, []);
   const handleModalTouchEnd = useCallback((e: React.TouchEvent) => {
     const diff = modalTouchStartX.current - e.changedTouches[0].clientX;
@@ -67,7 +75,9 @@ export function DemoPropertyCard({
         {hasImages ? (
           <div
             className="relative h-64 overflow-hidden bg-slate-200 sm:h-72 dark:bg-slate-700"
+            style={{ touchAction: "pan-y" }}
             onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
             <img
@@ -80,13 +90,13 @@ export function DemoPropertyCard({
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); prevImg(); }}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:bg-white"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 text-slate-700 shadow-lg transition-all hover:bg-white md:opacity-0 md:group-hover:opacity-100"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); nextImg(); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:bg-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 text-slate-700 shadow-lg transition-all hover:bg-white md:opacity-0 md:group-hover:opacity-100"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -106,7 +116,7 @@ export function DemoPropertyCard({
               <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
                 {p.type}
               </span>
-              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm shadow-sm ${
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm shadow-sm ${
                 property.purpose === "venta" ? "bg-blue-600/80" : property.purpose === "alquiler" ? "bg-emerald-600/80" : "bg-amber-600/80"
               }`}>
                 {purposeLabel}
@@ -125,7 +135,7 @@ export function DemoPropertyCard({
               <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
                 {p.type}
               </span>
-              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm shadow-sm ${
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm shadow-sm ${
                 property.purpose === "venta" ? "bg-blue-600/80" : property.purpose === "alquiler" ? "bg-emerald-600/80" : "bg-amber-600/80"
               }`}>
                 {purposeLabel}
@@ -185,7 +195,9 @@ export function DemoPropertyCard({
             {hasImages ? (
               <div
                 className="relative bg-slate-200 dark:bg-slate-700"
+                style={{ touchAction: "pan-y" }}
                 onTouchStart={handleModalTouchStart}
+                onTouchMove={handleModalTouchMove}
                 onTouchEnd={handleModalTouchEnd}
               >
                 <img
@@ -248,9 +260,9 @@ export function DemoPropertyCard({
               </div>
             )}
 
-            <div className="p-8">
-              <div className="flex items-start justify-between gap-4">
-                <div>
+            <div className="p-5 sm:p-8">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
                   <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{p.title}</h2>
                   <p className="mt-1 flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400">
                     <MapPin className="h-4 w-4" />
@@ -323,10 +335,10 @@ export function DemoPropertyCard({
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   {t("demo.card.contact-desc").replace("{ref}", property.ref)}
                 </p>
-                <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
                   <button
                     onClick={() => window.open(`tel:+34965830000`)}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 py-2.5 text-sm font-semibold text-white transition-colors dark:bg-blue-600"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-700 px-3 py-3 text-sm font-semibold text-white transition-colors dark:bg-blue-600"
                   >
                     <Phone className="h-4 w-4" />
                     {t("demo.card.phone")}
@@ -337,7 +349,7 @@ export function DemoPropertyCard({
                         `mailto:info@inmobiliaria.com?subject=${encodeURIComponent(`Consulta: ${property.ref} · ${property.title}`)}&body=${encodeURIComponent(`Hola,\n\nMe interesa la propiedad ref. ${property.ref} — ${property.title}.\nUbicación: ${property.location}\nPrecio: ${property.price}\n\nVer anuncio: https://costa-blanca-leads.vercel.app/demo?ref=${property.ref}\n\nPor favor, contactadme para más información.\n\nGracias.`)}`
                       )
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 px-3 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     <Mail className="h-4 w-4" />
                     {t("demo.card.email")}
@@ -349,7 +361,7 @@ export function DemoPropertyCard({
                         "_blank"
                       )
                     }
-                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-green-600 px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-700 dark:border-slate-700 dark:bg-green-700 dark:hover:bg-green-600"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-green-600 px-3 py-3 text-sm font-semibold text-white transition-colors hover:bg-green-700 dark:border-slate-700 dark:bg-green-700 dark:hover:bg-green-600"
                   >
                     <MessageCircle className="h-4 w-4" />
                     {t("demo.card.whatsapp")}
