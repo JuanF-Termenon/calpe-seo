@@ -14,6 +14,8 @@ import {
   Euro,
   Home as HomeIcon,
   MessageCircle,
+  Menu,
+  X,
 } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 import { DemoPropertyCard } from "@/components/demo-property-card";
@@ -26,6 +28,7 @@ export default function Home() {
   const { t } = useLang();
   const [previewProps, setPreviewProps] = useState<Property[]>([]);
   const [loadingPreview, setLoadingPreview] = useState(true);
+  const [mobileMenu, setMobileMenu] = useState(false);
 
   useEffect(() => {
     fetch("/api/properties")
@@ -81,48 +84,63 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
+            <button
+              onClick={() => setMobileMenu(!mobileMenu)}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 md:hidden dark:text-slate-400 dark:hover:bg-slate-800"
+            >
+              {mobileMenu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
             <a
               href="#agenda-tu-demo"
-              className="rounded-lg bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
+              className="hidden sm:inline-flex rounded-lg bg-blue-700 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               {t("nav.solicitar-demo")}
             </a>
           </div>
         </div>
+        {mobileMenu && (
+          <nav className="border-t border-slate-200 bg-white px-6 py-4 space-y-3 md:hidden dark:border-slate-800 dark:bg-slate-950">
+            <a href="#servicios" onClick={() => setMobileMenu(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800">{t("nav.servicios")}</a>
+            <a href="#como-funciona" onClick={() => setMobileMenu(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800">{t("nav.como-funciona")}</a>
+            <a href="#precios" onClick={() => setMobileMenu(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800">{t("nav.precios")}</a>
+            <a href="/demo" onClick={() => setMobileMenu(false)} className="block rounded-lg px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20">{t("nav.ver-demo")}</a>
+            <a href="#agenda-tu-demo" onClick={() => setMobileMenu(false)} className="block rounded-lg bg-blue-700 px-3 py-2.5 text-sm font-semibold text-white text-center">{t("nav.solicitar-demo")}</a>
+          </nav>
+        )}
       </header>
 
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-amber-50 dark:from-blue-950 dark:via-slate-950 dark:to-amber-950">
-        <div className="mx-auto max-w-6xl px-6 pb-24 pt-16 md:pb-32 md:pt-24">
+        <div className="mx-auto max-w-6xl px-6 pb-20 pt-12 md:pb-32 md:pt-24">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-blue-100 px-4 py-1.5 text-sm font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
-              <MapPin className="h-4 w-4" />
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3.5 py-1 text-xs font-medium text-blue-800 md:px-4 md:py-1.5 md:text-sm dark:bg-blue-900/40 dark:text-blue-300">
+              <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4" />
               {t("hero.badge")}
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 text-balance sm:text-5xl lg:text-6xl dark:text-slate-100">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 text-balance sm:text-4xl md:text-5xl lg:text-6xl dark:text-slate-100">
               {t("hero.title")}{" "}
               <span className="text-blue-700 dark:text-blue-400">{t("hero.title-highlight")}</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 text-pretty dark:text-slate-400">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600 text-pretty md:mt-6 md:text-lg dark:text-slate-400">
               {t("hero.subtitle")}
             </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-10">
               <a
                 href="#agenda-tu-demo"
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-8 py-3.5 text-base font-semibold text-white transition-colors hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-blue-700 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-700/25 transition-all hover:bg-blue-800 hover:shadow-blue-800/25 dark:bg-blue-600 dark:hover:bg-blue-700"
               >
                 {t("hero.cta")}
                 <ArrowRight className="h-4 w-4" />
               </a>
               <a
                 href="/demo"
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-8 py-3.5 text-base font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-8 py-3.5 text-base font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
               >
                 {t("hero.demo")}
               </a>
             </div>
-            <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-              {t("hero.tagline")}
-            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-slate-500 md:mt-8 dark:text-slate-400">
+              <span>{t("hero.tagline")}</span>
+            </div>
             <p className="mt-2 text-sm font-medium text-amber-700 dark:text-amber-400">
               {t("hero.launch-text")}
             </p>
@@ -181,7 +199,7 @@ export default function Home() {
             {loadingPreview ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-                  <div className="h-56 animate-pulse bg-slate-200 dark:bg-slate-700" />
+                  <div className="h-64 animate-pulse bg-slate-200 sm:h-72 dark:bg-slate-700" />
                   <div className="space-y-3 p-4">
                     <div className="h-4 w-3/4 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
                     <div className="h-3 w-1/2 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />

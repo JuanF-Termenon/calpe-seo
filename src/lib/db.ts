@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import type { Property } from "@/lib/demo-properties";
 
 const globalForPool = globalThis as unknown as { pool: Pool | undefined };
 
@@ -34,14 +35,25 @@ export async function query(text: string, params?: unknown[]) {
 }
 
 // Helper to convert snake_case DB rows to camelCase JS objects
-export function rowToProperty(row: Record<string, unknown>) {
+export function rowToProperty(row: Record<string, unknown>): Property {
   return {
-    ...row,
+    id: row.id as number,
+    ref: row.ref as string,
+    title: row.title as string,
+    location: row.location as string,
+    price: row.price as string,
+    beds: row.beds as number,
+    baths: row.baths as number,
+    m2: row.m2 as number,
+    type: row.type as string,
+    purpose: row.purpose as "venta" | "alquiler" | "temporal",
+    desc: row.desc as string,
     images: JSON.parse((row.images as string) || "[]"),
-    coords: { lat: row.lat, lng: row.lng },
+    coords: { lat: row.lat as number, lng: row.lng as number },
+    available: (row.available as boolean) ?? true,
     translations: typeof row.translations === "string" ? JSON.parse(row.translations) : (row.translations || {}),
-    clientId: row.clientId,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    clientId: row.clientId as number | null,
+    createdAt: row.createdAt as string | null,
+    updatedAt: row.updatedAt as string | null,
   };
 }

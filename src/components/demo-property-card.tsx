@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { MapPin, Bed, Bath, Maximize, X, Phone, Mail, MessageCircle, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Property } from "@/lib/demo-properties";
 import { useLang } from "@/lib/providers";
@@ -32,6 +32,32 @@ export function DemoPropertyCard({
 
   const purposeLabel = p.purpose === "venta" ? t("demo.card.for-sale") : p.purpose === "alquiler" ? t("demo.card.for-rent") : t("demo.card.for-season");
 
+  // Touch swipe for card image gallery
+  const touchStartX = useRef(0);
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextImg();
+      else prevImg();
+    }
+  }, [nextImg, prevImg]);
+
+  // Touch swipe for modal image gallery
+  const modalTouchStartX = useRef(0);
+  const handleModalTouchStart = useCallback((e: React.TouchEvent) => {
+    modalTouchStartX.current = e.touches[0].clientX;
+  }, []);
+  const handleModalTouchEnd = useCallback((e: React.TouchEvent) => {
+    const diff = modalTouchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextImg();
+      else prevImg();
+    }
+  }, [nextImg, prevImg]);
+
   return (
     <>
       <button
@@ -39,65 +65,73 @@ export function DemoPropertyCard({
         className="group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-left transition-all hover:shadow-lg dark:border-slate-700 dark:bg-slate-900"
       >
         {hasImages ? (
-          <div className="relative h-56 overflow-hidden bg-slate-200 dark:bg-slate-700">
+          <div
+            className="relative h-64 overflow-hidden bg-slate-200 sm:h-72 dark:bg-slate-700"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             <img
               src={property.images[imgIdx]}
               alt={p.title}
-              className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="block h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-black/10" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
             {property.images.length > 1 && (
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); prevImg(); }}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full bg-white/70 text-slate-700 opacity-0 shadow transition-all group-hover:opacity-100 hover:bg-white"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:bg-white"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); nextImg(); }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full bg-white/70 text-slate-700 opacity-0 shadow transition-all group-hover:opacity-100 hover:bg-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 text-slate-700 opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:bg-white"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                   {property.images.map((_, i) => (
                     <span
                       key={i}
                       className={`block rounded-full transition-all ${
-                        i === imgIdx ? "h-1.5 w-4 bg-white" : "h-1.5 w-1.5 bg-white/50"
+                        i === imgIdx ? "h-1.5 w-5 bg-white" : "h-1.5 w-1.5 bg-white/60"
                       }`}
                     />
                   ))}
                 </div>
               </>
             )}
-            <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
-              {p.type}
+            <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
+                {p.type}
+              </span>
+              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm shadow-sm ${
+                property.purpose === "venta" ? "bg-blue-600/80" : property.purpose === "alquiler" ? "bg-emerald-600/80" : "bg-amber-600/80"
+              }`}>
+                {purposeLabel}
+              </span>
+            </div>
+            <span className="absolute right-3 top-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
+              {property.price}
             </span>
-            <span className={`absolute left-3 top-12 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm ${
-      property.purpose === "venta" ? "bg-blue-600/80" : property.purpose === "alquiler" ? "bg-emerald-600/80" : "bg-amber-600/80"
-    }`}>
-      {purposeLabel}
-    </span>
-    <span className="absolute right-3 top-3 rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white">
-      {property.price}
-    </span>
-  </div>
-) : (
-  <div className={`relative h-56 bg-gradient-to-br ${color}`}>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <Building2 className="h-12 w-12 text-white/30" />
-    </div>
-    <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
-      {p.type}
-    </span>
-    <span className={`absolute left-3 top-12 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm ${
-      property.purpose === "venta" ? "bg-blue-600/80" : property.purpose === "alquiler" ? "bg-emerald-600/80" : "bg-amber-600/80"
-            }`}>
-              {purposeLabel}
-            </span>
-            <span className="absolute right-3 top-3 rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white">
+          </div>
+        ) : (
+          <div className={`relative h-64 sm:h-72 bg-gradient-to-br ${color}`}>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Building2 className="h-14 w-14 text-white/30" />
+            </div>
+            <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+              <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur-sm dark:bg-slate-800/90 dark:text-slate-300">
+                {p.type}
+              </span>
+              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm shadow-sm ${
+                property.purpose === "venta" ? "bg-blue-600/80" : property.purpose === "alquiler" ? "bg-emerald-600/80" : "bg-amber-600/80"
+              }`}>
+                {purposeLabel}
+              </span>
+            </div>
+            <span className="absolute right-3 top-3 rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
               {property.price}
             </span>
           </div>
@@ -149,34 +183,38 @@ export function DemoPropertyCard({
             onClick={(e) => e.stopPropagation()}
           >
             {hasImages ? (
-              <div className="relative bg-slate-200 dark:bg-slate-700">
+              <div
+                className="relative bg-slate-200 dark:bg-slate-700"
+                onTouchStart={handleModalTouchStart}
+                onTouchEnd={handleModalTouchEnd}
+              >
                 <img
                   src={property.images[imgIdx]}
                   alt={`${p.title} — foto ${imgIdx + 1}`}
-                  className="aspect-[16/9] w-full object-cover"
+                  className="aspect-[4/3] w-full object-cover sm:aspect-[16/9]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
                 {property.images.length > 1 && (
                   <>
                     <button
-                      onClick={prevImg}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/40"
+                      onClick={(e) => { e.stopPropagation(); prevImg(); }}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40 hover:scale-110"
                     >
                       <ChevronLeft className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={nextImg}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/40"
+                      onClick={(e) => { e.stopPropagation(); nextImg(); }}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-all hover:bg-white/40 hover:scale-110"
                     >
                       <ChevronRight className="h-5 w-5" />
                     </button>
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
                       {property.images.map((_, i) => (
                         <button
                           key={i}
-                          onClick={() => setImgIdx(i)}
-                          className={`h-1.5 rounded-full transition-all ${
-                            i === imgIdx ? "w-6 bg-white" : "w-1.5 bg-white/50"
+                          onClick={(e) => { e.stopPropagation(); setImgIdx(i); }}
+                          className={`h-2 rounded-full transition-all ${
+                            i === imgIdx ? "w-8 bg-white" : "w-2 bg-white/50 hover:bg-white/70"
                           }`}
                         />
                       ))}
@@ -185,7 +223,7 @@ export function DemoPropertyCard({
                 )}
                 <button
                   onClick={() => setOpen(false)}
-                  className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                  className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-black/50"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -194,13 +232,13 @@ export function DemoPropertyCard({
                 </span>
               </div>
             ) : (
-              <div className={`relative h-56 bg-gradient-to-br ${color}`}>
+              <div className={`relative h-64 sm:h-72 bg-gradient-to-br ${color}`}>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Building2 className="h-16 w-16 text-white/20" />
                 </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                  className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/30 text-white backdrop-blur-sm transition-all hover:bg-black/50"
                 >
                   <X className="h-5 w-5" />
                 </button>
