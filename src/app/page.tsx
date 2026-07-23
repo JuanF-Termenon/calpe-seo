@@ -358,7 +358,7 @@ export default function Home() {
                 <p className="text-xs text-amber-600 font-medium dark:text-amber-400">{t("pricing.launch-tag")}</p>
               </div>
               <ul className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
-                {[0,1,2,3,4,5,6,7].map((i) => (
+                {[0,1,2,3,4,5,6].map((i) => (
                   <li key={i} className="flex items-center gap-2">
                     <Check className="h-4 w-4 shrink-0 text-blue-700 dark:text-blue-400" />
                     {t(`pricing.captacion.${i}`)}
@@ -385,10 +385,10 @@ export default function Home() {
                 <p className="text-xs text-amber-600 font-medium dark:text-amber-400">{t("pricing.launch-tag")}</p>
               </div>
               <ul className="mt-6 space-y-3 text-sm text-slate-600 dark:text-slate-400">
-                {[0,1,2,3,4,5,6].map((i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0 text-blue-700 dark:text-blue-400" />
-                    {t(`pricing.premium-int.${i}`)}
+                {[0,1,2,3,4,5,6,7].map((i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 shrink-0 text-blue-700 dark:text-blue-400" />
+                      {t(`pricing.premium-int.${i}`)}
                   </li>
                 ))}
               </ul>
